@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment variables — NEVER commit these
+ai/.env
+frontend/nextjs-app/.env.local
+
+# FAISS index (too large for git)
+ai/vector_store/*.faiss
+ai/vector_store/*.pkl
+ai/vector-store/*.faiss
+ai/vector-store/*.pkl
+
+# Next.js
+frontend/nextjs-app/.next/
+frontend/nextjs-app/node_modules/
+
+# Logs
+logs/*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Data files (too large)
+data_engineering/datasets/*.csv
+data_engineering/datasets/*.json
+data-engineering/datasets/*.csv
+data-engineering/datasets/*.json
