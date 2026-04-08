@@ -1,0 +1,264 @@
+================================================================================
+                         TRAILBLAZE AI — PROJECT DESCRIPTION
+================================================================================
+
+PROJECT OVERVIEW
+----------------
+TrailBlaze AI is a cloud-ready, AI-powered outdoor guidance platform for
+Colorado trails. It combines Retrieval-Augmented Generation (RAG), real-time
+geospatial data, live weather intelligence, and user reviews to provide
+intelligent trail recommendations via a modern web interface.
+
+Users can explore ALL Colorado trails on an interactive clustered map, chat
+with an AI assistant that factors in real-time weather conditions, view
+detailed trail information with 4-day weather forecasts, and receive
+safety-aware hiking recommendations.
+
+
+CORE FEATURES
+-------------
+1. AI-Powered Trail Chat
+   - Natural language Q&A about Colorado trails
+   - Multi-turn conversation with context memory
+   - Weather-aware recommendations (warns about snow, ice, storms)
+   - Grounded responses — only recommends trails from the database
+   - Powered by LangGraph multi-agent orchestration
+
+2. Interactive Trail Map
+   - ALL Colorado trails displayed with marker clustering
+   - Zoom in to reveal individual trail pins
+   - Click a cluster → sidebar shows all trails in that area
+   - Click a pin → detail panel with weather, stats, photos, route
+   - Hover tooltip shows trail name, city, difficulty, distance
+   - Route polyline with start/end markers when trail selected
+   - Color-coded pins: green (easy), amber (moderate), red (hard)
+
+3. Real-Time Weather Integration
+   - Live current conditions (temp, humidity, wind, UV) per trail
+   - 4-day forecast with snow, rain, and temperature data
+   - Hiking advisory system (warns about hazardous conditions)
+   - Safety notes (ice, extreme cold, thunderstorms, high UV)
+   - LLM uses weather data to adjust trail recommendations
+   - Uses Open-Meteo API (100% free, no API key required)
+
+4. Trail Detail Panel
+   - Hero photo from Lorem Picsum
+   - Stats grid: distance, estimated hiking time, elevation gain, surface
+   - Current weather with icon, temp, feels-like, wind, humidity, UV
+   - Hiking advisory banner (green/amber/red based on conditions)
+   - 4-day forecast with snow/rain indicators
+   - Dog-friendly status, trail manager, route info
+   - Photo gallery
+
+5. Trail Search & Filtering
+   - Full-text search across trail names and cities
+   - Difficulty filter (Easy / Moderate / Hard)
+   - AI Recommendations section from chat results
+
+
+TECHNOLOGY STACK
+----------------
+Layer              | Technology
+-------------------+--------------------------------------------------
+AI/RAG             | Python, LangGraph, FAISS, OpenAI GPT-4o-mini
+Data Engineering   | Python, BeautifulSoup, Selenium, COTREX API
+Backend API        | FastAPI (Python), Motor (async MongoDB driver)
+Database           | MongoDB Atlas
+Frontend           | Next.js 15, React 19, TailwindCSS 4
+Mapping            | Leaflet + leaflet.markercluster
+Weather            | Open-Meteo API (free, no key)
+Photos             | Lorem Picsum (deterministic, free)
+Infra/DevOps       | Docker, AWS (EC2/Elastic Beanstalk), GitHub Actions
+
+
+ARCHITECTURE
+------------
+┌──────────────┐    ┌──────────────────────────────────────────────────┐
+│   Frontend   │    │                  Backend API                     │
+│  (Next.js)   │───▶│  FastAPI: /api/chat, /api/trails, /api/weather  │
+│  Port 3000   │    │           /api/geometry, /api/photos             │
+└──────────────┘    │  Port 8000                                       │
+                    └────────────────┬─────────────────────────────────┘
+                                     │
+                    ┌────────────────▼─────────────────────────────────┐
+                    │              AI Pipeline (LangGraph)              │
+                    │  Router → Vector Agent → Weather Agent            │
+                    │                    → Synthesizer Agent            │
+                    └──┬──────────────┬───────────────┬────────────────┘
+                       │              │               │
+                  ┌────▼────┐   ┌────▼────┐    ┌─────▼──────┐
+                  │  FAISS  │   │ MongoDB │    │ Open-Meteo │
+                  │ Vectors │   │  Atlas  │    │ Weather API│
+                  └─────────┘   └─────────┘    └────────────┘
+
+
+HOW IT WORKS
+------------
+1. DATA INGESTION (Data Engineering)
+   - Trail metadata scraped from COTREX (Colorado Trail Explorer) API
+   - User reviews scraped from AllTrails via Selenium
+   - Data cleaned, chunked, and enriched with geographic region info
+   - Embeddings generated with OpenAI text-embedding-3-small
+   - Stored in FAISS vector index for fast similarity search
+   - Raw trail data stored in MongoDB Atlas
+
+2. AI PIPELINE (LangGraph Multi-Agent)
+   The chat system uses a LangGraph state machine with 4 agents:
+
+   a) ROUTER AGENT — Classifies query as 'trail', 'weather', or 'both'
+   b) VECTOR AGENT — Searches FAISS for relevant trails using embeddings;
+      supports location-aware filtering (e.g., "near Boulder")
+   c) WEATHER AGENT — Fetches live weather from Open-Meteo for the trail
+      location; includes 4-day forecast with snow/rain data
+   d) SYNTHESIZER AGENT — Combines trail context + weather data into a
+      grounded, safety-aware response using GPT-4o-mini
+
+   The synthesizer is tuned to:
+   - WARN about hazardous weather (snow, ice, storms, extreme cold)
+   - ADVISE AGAINST trails in dangerous conditions
+   - SUGGEST alternatives in areas with better weather
+   - Include specific numbers (temperature, snowfall, wind speeds)
+
+3. BACKEND API (FastAPI)
+   Endpoints:
+   - POST /api/chat — AI chat with session management
+   - GET  /api/trails/featured — All trails with coordinates for map
+   - GET  /api/trails — Paginated trail listing with filters
+   - GET  /api/trails/search/{name} — Trail search
+   - GET  /api/weather?lat=&lng=&location= — 4-day weather forecast
+   - GET  /api/geometry?names= — Trail polylines from COTREX ArcGIS
+   - GET  /api/photos?name=&location= — Trail photos (Picsum)
+   - GET  /api/sessions — Chat session management
+
+4. FRONTEND (Next.js + React)
+   - Left sidebar: search, difficulty filters, trail cards
+   - Center: Leaflet map with marker clustering
+   - Right: trail detail panel with weather + stats
+   - Floating: AI chat panel (fixed position, z-9999)
+   - All trails loaded on map startup (1000+ trails)
+   - Cluster click → sidebar shows cluster trails
+   - Pin click → detail panel with weather forecast
+
+
+HOW TO RUN
+----------
+Prerequisites:
+  - Python 3.11+
+  - Node.js 18+
+  - MongoDB Atlas connection string
+  - OpenAI API key (for AI chat features)
+
+1. Clone the repository:
+   git clone https://github.com/<org>/TrailBlaze-AI.git
+   cd TrailBlaze-AI
+
+2. Create Python virtual environment:
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+
+3. Set environment variables (.env file):
+   MONGODB_URI=mongodb+srv://...
+   OPENAI_API_KEY=sk-...
+   OPENAI_CHAT_MODEL=gpt-4o-mini     (optional, default)
+
+4. Start the backend:
+   python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+
+5. Start the frontend:
+   cd frontend/nextjs-app
+   npm install
+   echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+   npm run dev
+
+6. Open http://localhost:3000 in your browser.
+
+
+PROJECT STRUCTURE
+-----------------
+TrailBlaze-AI/
+├── ai/                          # AI/RAG pipeline
+│   ├── langgraph/               # LangGraph agents & state machine
+│   │   ├── agents.py            # Router, Vector, Weather, Synthesizer
+│   │   ├── graph.py             # Graph definition & compilation
+│   │   └── state.py             # TrailBlazeState TypedDict
+│   ├── rag/                     # FAISS retrieval
+│   │   └── retriever.py         # retrieve_context, format_context
+│   ├── services/                # External service integrations
+│   │   ├── weather.py           # Open-Meteo weather fetching
+│   │   └── geography.py         # Manager→region coordinate mapping
+│   └── vector-store/            # FAISS index files
+│
+├── backend/                     # FastAPI backend
+│   └── app/
+│       ├── main.py              # App factory, lifespan, route registration
+│       ├── config.py            # Settings (env vars)
+│       ├── database.py          # MongoDB connection (Motor)
+│       ├── models/              # Pydantic models
+│       │   ├── trail.py         # TrailResponse, TrailheadResponse
+│       │   └── chat.py          # ChatRequest, ChatResponse
+│       ├── routes/              # API endpoints
+│       │   ├── trails.py        # /api/trails, /api/trails/featured
+│       │   ├── chat.py          # /api/chat
+│       │   ├── weather.py       # /api/weather (4-day forecast)
+│       │   ├── geometry.py      # /api/geometry (COTREX polylines)
+│       │   ├── photos.py        # /api/photos (Picsum)
+│       │   └── sessions.py      # /api/sessions
+│       └── services/
+│           └── ai_service.py    # AI orchestration, trail extraction
+│
+├── frontend/                    # Next.js frontend
+│   └── nextjs-app/
+│       └── src/
+│           ├── app/
+│           │   ├── page.tsx     # Main page (sidebar + map + detail)
+│           │   ├── layout.tsx   # HTML layout, CSS imports
+│           │   └── globals.css  # Global styles, animations
+│           ├── components/
+│           │   ├── TrailMap.tsx  # Leaflet map with marker clustering
+│           │   ├── TrailDetail.tsx # Detail panel with weather + stats
+│           │   ├── TrailCards.tsx  # Trail card list
+│           │   └── ChatPanel.tsx  # AI chat interface
+│           └── lib/
+│               └── api.ts       # API client (fetch functions, types)
+│
+├── data-engineering/            # Data collection & processing
+│   ├── scrapers/                # Web scrapers (AllTrails reviews)
+│   ├── connectors/              # COTREX API connectors
+│   └── pipeline/                # ETL pipeline scripts
+│
+├── infra/                       # Infrastructure
+│   ├── docker/                  # Dockerfiles
+│   ├── aws/                     # AWS deployment configs
+│   └── github-actions/          # CI/CD workflows
+│
+└── Project-Desc.txt             # This file
+
+
+EXTERNAL APIs USED
+------------------
+1. Open-Meteo (weather) — 100% free, no API key, no rate limit concerns
+   https://open-meteo.com/
+   Used for: current conditions, 4-day forecast, snow/rain/wind data
+
+2. Lorem Picsum (photos) — 100% free, no API key
+   https://picsum.photos/
+   Used for: deterministic trail photos based on trail name hash
+
+3. COTREX ArcGIS (geometry) — Free Colorado state API
+   Used for: trail polyline coordinates, trailhead locations
+
+4. OpenAI API — Requires API key (paid)
+   Used for: GPT-4o-mini chat, text-embedding-3-small for FAISS
+
+
+TEAM & DEVELOPMENT
+------------------
+Developed as part of the Big Data Analytics course (Spring 2026).
+Built with a focus on:
+  - Real-time data integration (live weather affecting recommendations)
+  - Scalable architecture (async FastAPI, chunked map loading)
+  - User safety (weather-aware advisories, condition warnings)
+  - Clean UI/UX (responsive design, smooth animations, clustering)
+
+================================================================================
