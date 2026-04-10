@@ -1,37 +1,42 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
 # Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
 .venv/
 venv/
-*.egg-info/
 
-# Environment variables — NEVER commit these
-ai/.env
-frontend/nextjs-app/.env.local
+# Node / frontend
+node_modules/
+.next/
+dist/
+build/
 
-# FAISS index (too large for git)
-ai/vector_store/*.faiss
-ai/vector_store/*.pkl
-ai/vector-store/*.faiss
-ai/vector-store/*.pkl
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*credentials*.json
+secrets*.json
 
-# Next.js
-frontend/nextjs-app/.next/
-frontend/nextjs-app/node_modules/
+# Logs and temporary artifacts
+*.log
+tmp/
+temp/
 
-# Logs
-logs/*.log
+# Local data artifacts
+data/raw/
+data/tmp/
+*.sqlite3
 
-# macOS
-.DS_Store
-
-# IDE
-.vscode/
-.idea/
-
-# Data files (too large)
-data_engineering/datasets/*.csv
-data_engineering/datasets/*.json
-data-engineering/datasets/*.csv
-data-engineering/datasets/*.json
+# Diagram source XML (keep exported images/docs instead)
+assets/Diagrams/XML-code/
+docs/diagrams/xml/
