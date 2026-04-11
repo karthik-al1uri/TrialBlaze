@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #2d6a4f;
+  --color-primary-light: #40916c;
+  --color-primary-dark: #1b4332;
+  --color-accent: #f59e0b;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-user-bubble: #2d6a4f;
+  --color-assistant-bubble: #f1f5f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Mapbox overrides */
+.mapboxgl-popup-content {
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom scrollbar */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Markdown rendering in chat bubbles */
+.prose-chat {
+  line-height: 1.6;
+}
+.prose-chat p {
+  margin: 0.25em 0;
+}
+.prose-chat strong {
+  font-weight: 700;
+}
+.prose-chat ul, .prose-chat ol {
+  margin: 0.4em 0;
+  padding-left: 1.25em;
+}
+.prose-chat li {
+  margin: 0.15em 0;
+}
+.prose-chat li > ul, .prose-chat li > ol {
+  margin: 0.1em 0;
+}
+.prose-chat h1, .prose-chat h2, .prose-chat h3 {
+  font-weight: 700;
+  margin: 0.6em 0 0.3em;
+}
+.prose-chat h1 { font-size: 1.1em; }
+.prose-chat h2 { font-size: 1.05em; }
+.prose-chat h3 { font-size: 1em; }
+.prose-chat code {
+  background: rgba(0,0,0,0.06);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.prose-chat hr {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  margin: 0.5em 0;
+}
+
+/* Typing animation */
+@keyframes dot-pulse {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}
+.typing-dot {
+  animation: dot-pulse 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Leaflet popup overrides */
+.trail-popup .leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+.trail-popup .leaflet-popup-content {
+  margin: 10px;
+  line-height: 1.4;
+}
+.trail-popup .leaflet-popup-tip {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Skeleton pulse for popup loading */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Trail tooltip */
+.trail-tooltip {
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  padding: 6px 10px !important;
+}
+
+/* Marker cluster overrides */
+.marker-cluster {
+  background: transparent !important;
+}
+.marker-cluster div {
+  background: transparent !important;
+}
+
+/* Pin bounce animation */
+@keyframes bounce {
+  0% { transform: translateY(-8px); }
+  50% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+
+/* Leaflet tooltip transitions */
+.leaflet-tooltip {
+  transition: opacity 0.15s ease;
+}
+
+/* Smooth map zoom */
+.leaflet-container {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Leaflet layer control — styled to match app dark theme */
+.leaflet-control-layers {
+  background: rgba(15, 23, 42, 0.92);
+  color: #e2e8f0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  padding: 8px 12px;
+  font-size: 13px;
+  min-width: 140px;
+}
+
+.leaflet-control-layers-toggle {
+  background-color: rgba(15, 23, 42, 0.92);
+}
+
+.leaflet-control-layers label {
+  color: #cbd5e1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.leaflet-control-layers label:hover {
+  color: #ffffff;
+}
+
+.leaflet-control-layers-separator {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 6px 0;
+}
+
+.leaflet-control-layers-base span,
+.leaflet-control-layers-overlays span {
+  color: #cbd5e1;
+}
+
+/* Custom cluster + trail pin icons */
+.leaflet-cluster-spiderfy-line {
+  stroke: rgba(255, 255, 255, 0.6) !important;
+  stroke-width: 1.5px !important;
+}
+
+.custom-cluster-icon,
+.custom-trail-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-trail-icon div:hover {
+  transform: rotate(-45deg) scale(1.2);
+  transition: transform 0.15s ease;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
