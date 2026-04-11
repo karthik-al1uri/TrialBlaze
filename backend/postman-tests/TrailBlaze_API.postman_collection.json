@@ -1,0 +1,404 @@
+{
+  "info": {
+    "name": "TrailBlaze AI API",
+    "description": "API endpoint tests for the TrailBlaze AI backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "session_id",
+      "value": ""
+    },
+    {
+      "key": "itinerary_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('App name', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('healthy');",
+                  "  pm.expect(json.app).to.eql('TrailBlaze AI');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Trails",
+      "item": [
+        {
+          "name": "List Trails",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/trails?page=1&page_size=5"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has trails array', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.trails).to.be.an('array');",
+                  "  pm.expect(json.total).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Trails - Filter Easy",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/trails?difficulty=easy&page_size=3"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All easy', () => {",
+                  "  const json = pm.response.json();",
+                  "  json.trails.forEach(t => pm.expect(t.difficulty).to.eql('easy'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Trails by Name",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/trails/search/trail?page_size=5"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has results', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.trails).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Trail - Not Found",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/trails/9999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Trailheads",
+      "item": [
+        {
+          "name": "List Trailheads",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/trailheads?page=1&page_size=5"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has trailheads', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.trailheads).to.be.an('array');",
+                  "  pm.expect(json.total).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Create Session",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/sessions",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user_id\": \"postman_test\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Has session_id', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.session_id).to.be.a('string');",
+                  "  pm.collectionVariables.set('session_id', json.session_id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Session",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/sessions/{{session_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Correct session', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.session_id).to.eql(pm.collectionVariables.get('session_id'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/sessions/{{session_id}}/history"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has messages array', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.messages).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Chat - Trail Query",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/chat",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"Find a moderate trail near Boulder\", \"session_id\": \"{{session_id}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has answer and route', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.answer).to.be.a('string');",
+                  "  pm.expect(json.route).to.eql('trail');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat - Weather Query",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/chat",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"What is the weather forecast for hiking today?\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Weather route', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.route).to.eql('weather');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat - Empty Query Rejected",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/chat",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Itineraries",
+      "item": [
+        {
+          "name": "Create Itinerary",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/itineraries",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Weekend Hike Plan\", \"trails\": [{\"name\": \"Royal Arch Trail\", \"difficulty\": \"moderate\", \"length_miles\": 3.4, \"order\": 1}]}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Has itinerary_id', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.itinerary_id).to.be.a('string');",
+                  "  pm.collectionVariables.set('itinerary_id', json.itinerary_id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Itineraries",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/itineraries"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has itineraries', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.itineraries).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Itinerary",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/itineraries/{{itinerary_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Itinerary",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/itineraries/{{itinerary_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
