@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Seed the reviews collection with realistic sample reviews for popular Colorado trails.
 Run: python -m backend.scripts.seed_reviews
