@@ -48,7 +48,7 @@ async def submit_condition(report: ConditionReport):
 
 
 @router.get("/recent")
-async def get_recent_conditions(limit: int = 15):
+async def get_recent_conditions(limit: int = 20):
     db = get_db()
     reports = (
         await db.conditions.find({})
