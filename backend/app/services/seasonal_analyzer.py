@@ -80,7 +80,7 @@ def _apply_review_seasonality(monthly_scores: Dict[int, int], review_month_count
     return adjusted
 
 
-def analyze_seasonal_scores(db, trail_name: str, lat: float, lng: float) -> Dict[str, Any]:
+async def analyze_seasonal_scores(db, trail_name: str, lat: float, lng: float) -> Dict[str, Any]:
     weather_monthly = _fetch_weather_monthly(lat, lng, year=date.today().year - 1)
 
     base_scores: Dict[int, int] = {}
@@ -93,7 +93,8 @@ def analyze_seasonal_scores(db, trail_name: str, lat: float, lng: float) -> Dict
         {"trail_name": trail_name, "hike_date": {"$type": "string", "$ne": ""}},
         {"_id": 0, "hike_date": 1},
     )
-    for r in review_cursor:
+    reviews = await review_cursor.to_list(length=None)
+    for r in reviews:
         hike_date = r.get("hike_date", "")
         try:
             month = int(hike_date.split("-")[1])

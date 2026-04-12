@@ -1,0 +1,458 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="1">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ============ BACKGROUND SECTIONS ============ -->
+
+    <!-- User Layer -->
+    <mxCell id="bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="40" y="40" width="200" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg1l" value="USER LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#23527c;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="40" y="540" width="200" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- Frontend Layer -->
+    <mxCell id="bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="260" y="40" width="240" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg2l" value="FRONTEND" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#2d6a4f;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="260" y="540" width="240" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- Backend Layer -->
+    <mxCell id="bg3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="520" y="40" width="260" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg3l" value="BACKEND — FastAPI" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#7d5a00;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="520" y="540" width="260" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- AI Layer -->
+    <mxCell id="bg4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="800" y="40" width="280" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg4l" value="AI PIPELINE — LangGraph + RAG" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#8b0000;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="800" y="540" width="280" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- Data Layer -->
+    <mxCell id="bg5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="40" width="260" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg5l" value="DATA LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#4a235a;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="540" width="260" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- External APIs Layer -->
+    <mxCell id="bg6" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;opacity=30;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="1380" y="40" width="240" height="1060" as="geometry" />
+    </mxCell>
+    <mxCell id="bg6l" value="EXTERNAL APIs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#333333;rotation=-90;" vertex="1" parent="1">
+      <mxGeometry x="1380" y="540" width="240" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ============ TITLE ============ -->
+    <mxCell id="title" value="TrailBlaze AI — System Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="40" y="0" width="1580" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ============ USER LAYER ============ -->
+    <mxCell id="user" value="👤 User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;arcSize=20;" vertex="1" parent="1">
+      <mxGeometry x="70" y="200" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <mxCell id="browser" value="🌐 Web Browser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;arcSize=20;" vertex="1" parent="1">
+      <mxGeometry x="70" y="340" width="140" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- ============ FRONTEND LAYER ============ -->
+
+    <!-- Next.js App -->
+    <mxCell id="nextjs" value="Next.js 15 + React 19&#xa;TailwindCSS 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="110" width="190" height="55" as="geometry" />
+    </mxCell>
+
+    <!-- Map -->
+    <mxCell id="map" value="🗺 Leaflet Map&#xa;4 Tile Layers + Overlays&#xa;Donut Clusters + Spiderfy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="200" width="190" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Sidebar -->
+    <mxCell id="sidebar" value="📋 Sidebar&#xa;Region Chips + Search&#xa;Filters + Fitness Match" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="305" width="190" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Trail Detail -->
+    <mxCell id="detail" value="📍 Trail Detail Panel&#xa;Weather + Reviews + Wildlife&#xa;Elevation + Nearby Trails" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="410" width="190" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Chat Panel -->
+    <mxCell id="chat" value="💬 AI Chat Panel&#xa;Voice Input + EN/ES&#xa;Itinerary Builder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="515" width="190" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Features -->
+    <mxCell id="features" value="⭐ Features&#xa;Surprise Me + Saved Trails&#xa;Isochrone + GPX Preview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="620" width="190" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- API Client -->
+    <mxCell id="apiclient" value="🔗 API Client (api.ts)&#xa;24 Fetch Functions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="285" y="730" width="190" height="55" as="geometry" />
+    </mxCell>
+
+    <!-- ============ BACKEND LAYER ============ -->
+
+    <!-- FastAPI Gateway -->
+    <mxCell id="fastapi" value="⚡ FastAPI Gateway&#xa;main.py — Router Registration&#xa;22 Endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="110" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Trail Routes -->
+    <mxCell id="trailroutes" value="🥾 Trail Routes&#xa;featured / nearby / search&#xa;surprise / crowd / seasonal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="215" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Reviews + Conditions -->
+    <mxCell id="reviewroutes" value="⭐ Reviews + Conditions&#xa;submit / fetch / summary&#xa;6 condition types" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="320" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Weather + Geometry -->
+    <mxCell id="weatherroutes" value="🌤 Weather + Geometry&#xa;Open-Meteo 4-day forecast&#xa;COTREX polylines + GPX" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="425" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- AI Routes -->
+    <mxCell id="airoutes" value="🤖 AI Routes&#xa;narrate / chat / sessions&#xa;isochrone / NPS / sun" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="530" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Services -->
+    <mxCell id="services" value="⚙️ Backend Services&#xa;TrailBlaze Score + Crowd&#xa;Seasonal + Wildlife Alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="635" width="210" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Config -->
+    <mxCell id="config" value="🔧 Config + Database&#xa;pydantic-settings&#xa;Motor async MongoDB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="545" y="740" width="210" height="55" as="geometry" />
+    </mxCell>
+
+    <!-- ============ AI PIPELINE LAYER ============ -->
+
+    <!-- LangGraph -->
+    <mxCell id="langgraph" value="🧠 LangGraph Orchestrator&#xa;State Machine Graph&#xa;4 Intents: trail/weather/both/NP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="110" width="230" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Router Agent -->
+    <mxCell id="router" value="🔀 Router Agent&#xa;Classifies query intent&#xa;national_park → NPS filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="215" width="230" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Vector Agent -->
+    <mxCell id="vector" value="🔍 Vector Agent (RAG)&#xa;HyDE → BM25+FAISS Hybrid&#xa;RRF Fusion + Cross-Encoder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="320" width="230" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Weather Agent -->
+    <mxCell id="weatheragent" value="🌡 Weather Agent&#xa;Fetches live conditions&#xa;Hiking advisory generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="425" width="230" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Synthesizer -->
+    <mxCell id="synth" value="✍️ Synthesizer Agent&#xa;GPT-4o-mini response&#xa;Weather-aware recommendations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="530" width="230" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- RAG Pipeline -->
+    <mxCell id="ragpipe" value="⚡ Advanced RAG Pipeline&#xa;Stage 1: HyDE (hypothetical doc)&#xa;Stage 2: BM25 + FAISS hybrid&#xa;Stage 3: Cross-encoder rerank" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="635" width="230" height="85" as="geometry" />
+    </mxCell>
+
+    <!-- Rebuild Index -->
+    <mxCell id="rebuild" value="🔄 rebuild_index.py&#xa;Embed all 5,661 trails&#xa;text-embedding-3-small" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="825" y="750" width="230" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- ============ DATA LAYER ============ -->
+
+    <!-- MongoDB -->
+    <mxCell id="mongo" value="🍃 MongoDB Atlas M0&#xa;trailblaze.trails — 5,661&#xa;reviews / conditions / photos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="110" width="220" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- FAISS -->
+    <mxCell id="faiss" value="📦 FAISS Vector Store&#xa;5,600 trail embeddings&#xa;index.faiss + index.pkl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="215" width="220" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Data Sources -->
+    <mxCell id="datasources" value="📡 Data Sources&#xa;COTREX — 1,272 trails&#xa;USFS — 3,220 trails&#xa;NPS — 160 trails&#xa;OSM — 1,009 trails" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="320" width="220" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- ETL Pipeline -->
+    <mxCell id="etl" value="🔧 ETL Pipeline&#xa;Connectors + Normalizer&#xa;Chunker + Deduplication&#xa;3-layer dedup (1,224 caught)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="455" width="220" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Sentiment -->
+    <mxCell id="sentiment" value="🧠 Sentiment Analysis&#xa;DistilBERT NLP pipeline&#xa;Theme extraction from reviews" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="580" width="220" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Cloud -->
+    <mxCell id="cloud" value="☁️ Cloud Deployment&#xa;Docker → AWS ECR&#xa;ECS/Fargate + Vercel&#xa;GitHub Actions CI/CD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1120" y="685" width="220" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ============ EXTERNAL APIs LAYER ============ -->
+
+    <!-- OpenAI -->
+    <mxCell id="openai" value="🤖 OpenAI API&#xa;GPT-4o-mini (chat)&#xa;text-embedding-3-small" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="110" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Open-Meteo -->
+    <mxCell id="openmeteo" value="🌤 Open-Meteo API&#xa;Live weather + 4-day forecast&#xa;Free — no key required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="215" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- iNaturalist -->
+    <mxCell id="inat" value="🦌 iNaturalist API&#xa;Wildlife observations&#xa;Free — 10k req/day" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="320" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Unsplash -->
+    <mxCell id="unsplash" value="📸 Unsplash API&#xa;Trail photos cached&#xa;4,977 trails covered" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="425" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- USGS -->
+    <mxCell id="usgs" value="⛰ USGS Elevation API&#xa;Elevation profiles&#xa;Free — no key required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="530" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- NPS -->
+    <mxCell id="npsapi" value="🏔 NPS API&#xa;Park alerts + closures&#xa;RMNP trail data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="635" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- COTREX ArcGIS -->
+    <mxCell id="cotrex" value="🗂 COTREX ArcGIS&#xa;Trail geometry + polylines&#xa;Colorado state trail data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;fontSize=11;arcSize=15;" vertex="1" parent="1">
+      <mxGeometry x="1400" y="740" width="200" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — USER TO FRONTEND ============ -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" source="user" target="map" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e1l" value="interacts" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e1">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" source="browser" target="sidebar" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — FRONTEND TO BACKEND ============ -->
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=2;" edge="1" source="apiclient" target="fastapi" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3l" value="REST API calls" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e3">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=1;dashed=1;" edge="1" source="map" target="trailroutes" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=1;dashed=1;" edge="1" source="chat" target="airoutes" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;strokeWidth=1;dashed=1;" edge="1" source="detail" target="weatherroutes" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — BACKEND TO AI ============ -->
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="airoutes" target="langgraph" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e7l" value="query handoff" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e7">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — AI PIPELINE INTERNAL ============ -->
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="langgraph" target="router" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="router" target="vector" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="router" target="weatheragent" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="vector" target="synth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="weatheragent" target="synth" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=1;dashed=1;" edge="1" source="vector" target="ragpipe" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — AI TO DATA ============ -->
+    <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="vector" target="faiss" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e14l" value="semantic search" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e14">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="vector" target="mongo" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e15l" value="trail metadata" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e15">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Backend to MongoDB -->
+    <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="config" target="mongo" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e16l" value="Motor async" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e16">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ETL to MongoDB -->
+    <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="etl" target="mongo" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e17l" value="persist trails" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e17">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Rebuild to FAISS -->
+    <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=1;dashed=1;" edge="1" source="rebuild" target="faiss" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e18l" value="build index" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e18">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Data sources to ETL -->
+    <mxCell id="e19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="datasources" target="etl" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e19l" value="ingest" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e19">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ ARROWS — TO EXTERNAL APIs ============ -->
+    <mxCell id="e20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;" edge="1" source="synth" target="openai" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e20l" value="LLM inference" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e20">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=1;dashed=1;" edge="1" source="rebuild" target="openai" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e21l" value="embeddings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e21">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="weatherroutes" target="openmeteo" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e22l" value="weather data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e22">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=1;dashed=1;" edge="1" source="trailroutes" target="inat" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e23l" value="wildlife obs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e23">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=1;dashed=1;" edge="1" source="services" target="unsplash" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e24l" value="trail photos" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e24">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=1;dashed=1;" edge="1" source="weatherroutes" target="usgs" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e25l" value="elevation" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e25">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6b656;strokeWidth=1;dashed=1;" edge="1" source="airoutes" target="npsapi" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e26l" value="park alerts" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e26">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <mxCell id="e27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" source="datasources" target="cotrex" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e27l" value="source data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e27">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ RESPONSE ARROW BACK ============ -->
+    <mxCell id="e28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;strokeWidth=2;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" source="synth" target="airoutes" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="810" y="565" />
+          <mxPoint x="810" y="565" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e28l" value="AI response" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;fontColor=#b85450;fontStyle=1;" vertex="1" connectable="0" parent="e28">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ============ LEGEND ============ -->
+    <mxCell id="leg" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="70" y="880" width="100" height="30" as="geometry" />
+    </mxCell>
+
+    <mxCell id="leg1" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#333333;strokeWidth=2;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="70" y="920" as="sourcePoint" />
+        <mxPoint x="130" y="920" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="leg1l" value="Primary data flow" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="135" y="912" width="120" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="leg2" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#333333;strokeWidth=1;dashed=1;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="70" y="945" as="sourcePoint" />
+        <mxPoint x="130" y="945" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="leg2l" value="Secondary / async call" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="135" y="937" width="130" height="20" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>

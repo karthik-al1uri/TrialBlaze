@@ -22,124 +22,67 @@ function getDiffColor(d?: string) {
   }
 }
 
-function getDifficultyColor(difficulty?: string) {
-  const d = (difficulty || "").toLowerCase();
-  if (d === "easy") return { fill: "#22c55e", border: "#16a34a" };
-  if (d === "hard") return { fill: "#ef4444", border: "#dc2626" };
-  return { fill: "#f59e0b", border: "#d97706" }; // moderate / unknown
-}
+const PIN_COLOR = "#059669";   // emerald-600
+const PIN_BORDER = "#047857"; // emerald-700
 
-function createTrailIcon(difficulty?: string, wildlifeAlert?: boolean) {
-  const { fill, border } = getDifficultyColor(difficulty);
+function createTrailIcon() {
   return L.divIcon({
     html: `
-      <div style="position:relative; width:28px; height:28px;">
-        <div style="
-          width: 28px; height: 28px;
-          background: ${fill};
-          border: 3px solid ${border};
-          border-radius: 50% 50% 50% 0;
-          transform: rotate(-45deg);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-        ">
-          <div style="
-            width: 10px; height: 10px;
-            background: white; border-radius: 50%;
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-          "></div>
-        </div>
-        ${wildlifeAlert ? `<span style="position:absolute; bottom:-1px; right:-1px; background:#dc2626; border-radius:50%; width:11px; height:11px; font-size:8px; color:white; display:flex; align-items:center; justify-content:center; border:1px solid white; font-weight:700;">!</span>` : ""}
-      </div>
+      <svg width="24" height="32" viewBox="0 0 24 32" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">
+        <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0z"
+              fill="${PIN_COLOR}" stroke="${PIN_BORDER}" stroke-width="1"/>
+        <circle cx="12" cy="11" r="4.5" fill="white" opacity="0.9"/>
+      </svg>
     `,
     className: "custom-trail-icon",
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28],
+    iconSize: [24, 32],
+    iconAnchor: [12, 32],
+    popupAnchor: [0, -32],
   });
 }
 
-function makeSelectedIcon(color: string) {
+function makeSelectedIcon() {
   return L.divIcon({
     className: "",
-    iconSize: [34, 44],
-    iconAnchor: [17, 44],
-    popupAnchor: [0, -46],
+    iconSize: [32, 42],
+    iconAnchor: [16, 42],
+    popupAnchor: [0, -44],
     html: `<div style="filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4));cursor:pointer;animation:bounce 0.3s ease-out;">
-      <svg width="34" height="44" viewBox="0 0 34 44">
-        <path d="M17 0C7.6 0 0 7.6 0 17c0 12.7 17 27 17 27s17-14.3 17-27C34 7.6 26.4 0 17 0z" fill="${color}" stroke="white" stroke-width="2.5"/>
-        <circle cx="17" cy="15" r="6.5" fill="white" opacity="0.9"/>
-        <circle cx="17" cy="15" r="3" fill="${color}"/>
+      <svg width="32" height="42" viewBox="0 0 32 42">
+        <path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 26 16 26s16-14 16-26C32 7.2 24.8 0 16 0z"
+              fill="#0d9488" stroke="white" stroke-width="2.5"/>
+        <circle cx="16" cy="14" r="6" fill="white" opacity="0.95"/>
+        <circle cx="16" cy="14" r="2.5" fill="#0d9488"/>
       </svg>
     </div>`,
   });
 }
 
-function makeDifficultyClusterIcon(cluster: L.MarkerCluster) {
-  const markers = cluster.getAllChildMarkers() as any[];
-  const total = markers.length;
-
-  const easy = markers.filter(m => (m.options?.trailDifficulty || "").toLowerCase() === "easy").length;
-  const hard = markers.filter(m => (m.options?.trailDifficulty || "").toLowerCase() === "hard").length;
-  const moderate = total - easy - hard;
-
-  // Size scales with count
-  const size = total < 10 ? 36 : total < 50 ? 44 : 52;
+function makeClusterIcon(cluster: L.MarkerCluster) {
+  const total = cluster.getChildCount();
+  const size = total < 10 ? 34 : total < 50 ? 40 : 48;
   const half = size / 2;
-  const stroke = size < 40 ? 6 : 7;
-  const r = half - stroke / 2 - 1; // radius inside the SVG
-  const circ = 2 * Math.PI * r;
-
-  // Donut arc segments: Easy (green), Moderate (amber), Hard (red)
-  const segments: { color: string; count: number }[] = [
-    { color: "#22c55e", count: easy },
-    { color: "#f59e0b", count: moderate },
-    { color: "#ef4444", count: hard },
-  ];
-
-  // Dominant difficulty for outer ring border
-  let borderColor = "#d97706"; // amber default
-  if (hard > easy && hard > moderate) borderColor = "#dc2626";
-  else if (easy > hard && easy > moderate) borderColor = "#16a34a";
-
-  // Build SVG arcs using stroke-dasharray + stroke-dashoffset
-  let offset = 0;
-  const arcs = segments
-    .filter(s => s.count > 0)
-    .map(s => {
-      const len = (s.count / total) * circ;
-      const arc = `<circle cx="${half}" cy="${half}" r="${r}" fill="none"
-        stroke="${s.color}" stroke-width="${stroke}"
-        stroke-dasharray="${len} ${circ - len}"
-        stroke-dashoffset="${-offset}"
-        transform="rotate(-90 ${half} ${half})" />`;
-      offset += len;
-      return arc;
-    })
-    .join("");
-
   const fontSize = total < 100 ? 12 : 10;
 
   return L.divIcon({
     html: `
       <div style="cursor:pointer;transition:transform 0.15s ease;"
-           onmouseover="this.style.transform='scale(1.12)'"
+           onmouseover="this.style.transform='scale(1.1)'"
            onmouseout="this.style.transform='scale(1)'">
-        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-          <circle cx="${half}" cy="${half}" r="${half - 1}" fill="white"
-            stroke="${borderColor}" stroke-width="1.5"
-            style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))" />
-          ${arcs}
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"
+             style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.25))">
+          <circle cx="${half}" cy="${half}" r="${half - 1}" fill="#059669" opacity="0.9"/>
+          <circle cx="${half}" cy="${half}" r="${half - 3}" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
           <text x="${half}" y="${half}" text-anchor="middle"
             dominant-baseline="central"
-            fill="#1e293b" font-weight="700" font-size="${fontSize}"
+            fill="white" font-weight="700" font-size="${fontSize}"
             font-family="-apple-system,BlinkMacSystemFont,sans-serif">${total}</text>
         </svg>
       </div>
     `,
     className: "custom-cluster-icon",
     iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
+    iconAnchor: [half, half],
   });
 }
 
@@ -203,6 +146,20 @@ export default function TrailMap({
       { attribution: "© USGS National Map", maxZoom: 16 }
     );
 
+    // Optional Mapbox GL JS satellite layer (only when token is set)
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const mapboxLayer = mapboxToken
+      ? L.tileLayer(
+          `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/{z}/{x}/{y}@2x?access_token=${mapboxToken}`,
+          {
+            attribution: "© Mapbox © OpenStreetMap",
+            maxZoom: 22,
+            tileSize: 512,
+            zoomOffset: -1,
+          }
+        )
+      : null;
+
     // Overlay — hiking routes
     const hikingRoutes = L.tileLayer(
       "https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png",
@@ -235,20 +192,24 @@ export default function TrailMap({
     );
 
     // Layer control (Trail Pins overlay added later when cluster is created)
+    const baseLayers: Record<string, L.TileLayer> = {
+      "Street": streetLayer,
+      "Topo": topoLayer,
+      "Satellite": satelliteLayer,
+      "USGS Topo": usgsTopo,
+    };
+    if (mapboxLayer) {
+      baseLayers["Mapbox Satellite"] = mapboxLayer;
+    }
     const lc = L.control.layers(
-      {
-        "Street": streetLayer,
-        "Topo": topoLayer,
-        "Satellite": satelliteLayer,
-        "USGS Topo": usgsTopo,
-      },
+      baseLayers,
       {
         "Hiking Routes": hikingRoutes,
         "3D Terrain": terrainHillshade,
         "🔥 Fire Risk": fireRisk,
         "🏔️ Avalanche Zones": avalancheZones,
       },
-      { position: "topright", collapsed: false }
+      { position: "topright", collapsed: window.innerWidth < 768 }
     ).addTo(m);
     layerControlRef.current = lc;
 
@@ -323,16 +284,20 @@ export default function TrailMap({
       animateAddingMarkers: false,
       chunkedLoading: true,
       spiderfyDistanceMultiplier: 2.5,
-      iconCreateFunction: (c) => makeDifficultyClusterIcon(c),
+      iconCreateFunction: (c) => makeClusterIcon(c),
     });
 
     // When a cluster is clicked, show drawer for small clusters (≤5), otherwise zoom
     cluster.on("clusterclick", (e: any) => {
       const childMarkers = e.layer.getAllChildMarkers();
+      const seen = new Set<string>();
       const clusterTrails: MapTrail[] = [];
       childMarkers.forEach((marker: L.Marker) => {
         const t = trailByMarkerRef.current.get(marker);
-        if (t) clusterTrails.push(t);
+        if (t && !seen.has(t.name)) {
+          seen.add(t.name);
+          clusterTrails.push(t);
+        }
       });
       if (childMarkers.length <= 5 && clusterTrails.length > 0) {
         e.originalEvent?.stopPropagation();
@@ -346,8 +311,7 @@ export default function TrailMap({
       if (!trail.lat || !trail.lng) return;
       const color = getDiffColor(trail.difficulty);
       const marker = L.marker([trail.lat, trail.lng], {
-        icon: createTrailIcon(trail.difficulty, trail.wildlife_alert),
-        trailDifficulty: trail.difficulty,
+        icon: createTrailIcon(),
         trailData: trail,
       } as any);
 
@@ -386,6 +350,27 @@ export default function TrailMap({
       layerControlRef.current.addOverlay(cluster, "Trail Pins");
     }
 
+    // Crowd density heatmap — canvas circles sized by review_count
+    const heatTrails = featuredTrails.filter((t) => t.lat && t.lng && (t.review_count ?? 0) > 0);
+    if (heatTrails.length > 0) {
+      const maxReviews = Math.max(...heatTrails.map((t) => t.review_count ?? 1), 1);
+      const heatGroup = L.layerGroup(
+        heatTrails.map((t) => {
+          const r = Math.max(6, Math.round(((t.review_count ?? 1) / maxReviews) * 28));
+          return L.circleMarker([t.lat!, t.lng!], {
+            radius: r,
+            color: "transparent",
+            fillColor: "#f59e0b",
+            fillOpacity: 0.25,
+            interactive: false,
+          });
+        })
+      );
+      if (layerControlRef.current) {
+        layerControlRef.current.addOverlay(heatGroup, "🔥 Crowd Density");
+      }
+    }
+
     return () => {
       // Remove overlay from layer control on cleanup
       if (layerControlRef.current && clusterRef.current) {
@@ -405,9 +390,8 @@ export default function TrailMap({
     }
 
     if (selectedTrail?.lat && selectedTrail?.lng) {
-      const color = getDiffColor(selectedTrail.difficulty);
       const pin = L.marker([selectedTrail.lat, selectedTrail.lng], {
-        icon: makeSelectedIcon(color),
+        icon: makeSelectedIcon(),
         zIndexOffset: 2000,
       }).addTo(m);
       selectedPinRef.current = pin;

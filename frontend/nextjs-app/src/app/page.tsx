@@ -6,8 +6,11 @@ import ChatPanel from "@/components/ChatPanel";
 import TrailCards from "@/components/TrailCards";
 import TrailDetail from "@/components/TrailDetail";
 import ClusterDrawer from "@/components/ClusterDrawer";
-import { MessageSquare, X, Mountain, Search, MapPin, Car, Loader2, Settings, Heart } from "lucide-react";
+import { MessageSquare, X, Mountain, Search, Car, Loader2, Settings, Heart, Map, Moon, Sun, GitCompare, CalendarDays, Activity, Share2 } from "lucide-react";
 import { fetchFeaturedTrails, fetchTrailsByRegion, fetchIsochrone, fetchSurpriseTrail, type TrailReference, type MapTrail, type IsochroneResponse } from "@/lib/api";
+import TrailComparison from "@/components/TrailComparison";
+import ItineraryBuilder from "@/components/ItineraryBuilder";
+import ConditionsFeed from "@/components/ConditionsFeed";
 
 const TrailMap = dynamic(() => import("@/components/TrailMap"), { ssr: false });
 
@@ -24,6 +27,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [drawerTrails, setDrawerTrails] = useState<MapTrail[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"map" | "search" | "chat" | "saved">("map");
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
   const [mapBounds, setMapBounds] = useState<[[number, number], [number, number]] | null>(null);
 
@@ -51,12 +55,37 @@ export default function Home() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [surpriseLoading, setSurpriseLoading] = useState(false);
 
+  // Dark mode
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Trail comparison
+  const [compareTrails, setCompareTrails] = useState<MapTrail[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  // Itinerary builder
+  const [itineraryOpen, setItineraryOpen] = useState(false);
+
+  // Conditions feed sidebar tab
+  const [conditionsOpen, setConditionsOpen] = useState(false);
+
+  // Share toast
+  const [shareToast, setShareToast] = useState(false);
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("trailblaze_favorites");
       if (saved) setFavorites(JSON.parse(saved));
     } catch {}
     setChatSeen(!!localStorage.getItem("chat_seen"));
+    // Dark mode persisted preference
+    const dm = localStorage.getItem("trailblaze_dark");
+    if (dm === "1") setDarkMode(true);
+    // Deep-link: ?trail=Bear+Peak
+    const params = new URLSearchParams(window.location.search);
+    const trailParam = params.get("trail");
+    if (trailParam) {
+      setSelectedTrail({ name: trailParam, review_count: 0 });
+    }
   }, []);
 
   const handleOpenChat = () => {
@@ -104,6 +133,8 @@ export default function Home() {
   const [isoPolygon, setIsoPolygon] = useState<IsochroneResponse["polygon"] | null>(null);
   const [isoLoading, setIsoLoading] = useState(false);
   const [isoError, setIsoError] = useState<string | null>(null);
+  const [isoApproximate, setIsoApproximate] = useState(false);
+  const [isoMessage, setIsoMessage] = useState<string | null>(null);
 
   const REGION_BOUNDS: Record<string, [[number, number], [number, number]]> = {
     "Rocky Mountains":   [[40.1, -105.9], [40.7, -105.4]],
@@ -158,8 +189,12 @@ export default function Home() {
       if (result.error) {
         setIsoError(result.error);
         setIsoPolygon(null);
+        setIsoApproximate(false);
+        setIsoMessage(null);
       } else if (result.polygon) {
         setIsoPolygon(result.polygon);
+        setIsoApproximate(result.approximate ?? false);
+        setIsoMessage(result.message ?? null);
       }
     } catch (err) {
       setIsoError("Failed to calculate drive time area.");
@@ -172,6 +207,40 @@ export default function Home() {
     setIsoPolygon(null);
     setIsoAddress("");
     setIsoError(null);
+    setIsoApproximate(false);
+    setIsoMessage(null);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("trailblaze_dark", next ? "1" : "0"); } catch {}
+      return next;
+    });
+  };
+
+  const handleShare = (trail: MapTrail) => {
+    const url = `${window.location.origin}${window.location.pathname}?trail=${encodeURIComponent(trail.name)}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setShareToast(true);
+      setTimeout(() => setShareToast(false), 2500);
+    });
+  };
+
+  const addToCompare = (trail: MapTrail) => {
+    setCompareTrails((prev) => {
+      if (prev.find((t) => t.name === trail.name) || prev.length >= 4) return prev;
+      return [...prev, trail];
+    });
+    setCompareOpen(true);
+  };
+
+  const removeFromCompare = (name: string) => {
+    setCompareTrails((prev) => {
+      const next = prev.filter((t) => t.name !== name);
+      if (!next.length) setCompareOpen(false);
+      return next;
+    });
   };
 
   const handleSurpriseMe = async () => {
@@ -256,8 +325,8 @@ export default function Home() {
           review_count: 0,
           trailblaze_score: t.trailblaze_score,
         })));
-      } catch (err) {
-        console.error("Failed to fetch region trails:", err);
+      } catch {
+        // silently ignore fetch failures
       }
     }
     setClusterTrails(null);
@@ -292,11 +361,22 @@ export default function Home() {
     : "All Trails";
 
   return (
-    <div className="h-screen flex relative overflow-hidden">
-      {/* Left Sidebar — Trail Browse */}
-      <div className="w-[360px] h-full flex flex-col bg-white border-r border-gray-200 z-10 shrink-0 hidden md:flex">
+    <div className={`h-screen flex relative overflow-hidden pb-14 md:pb-0 ${darkMode ? "dark bg-gray-950" : ""}`}>
+      {/* Left Sidebar — Desktop: always visible, Mobile: shown as overlay on search/saved tab */}
+      <div className={`
+        ${mobileTab === "search" || mobileTab === "saved" ? "flex" : "hidden"} md:flex
+        fixed inset-0 z-30 md:static md:z-10
+        w-full md:w-[360px] h-full flex-col bg-white md:border-r border-gray-200 md:shrink-0
+      `}>
         {/* Header */}
         <div className="px-4 py-3 bg-gradient-to-r from-emerald-800 to-emerald-700 flex items-center gap-3">
+          {/* Mobile back button */}
+          <button
+            onClick={() => setMobileTab("map")}
+            className="md:hidden p-1.5 rounded-lg bg-white/10 text-emerald-200 hover:bg-white/20 hover:text-white transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
           <Mountain className="w-6 h-6 text-amber-400" />
           <div className="flex-1">
             <h1 className="text-lg font-bold text-white leading-tight">TrailBlaze AI</h1>
@@ -310,8 +390,22 @@ export default function Home() {
             <Settings className="w-5 h-5" />
           </button>
           <button
+            onClick={() => setItineraryOpen(true)}
+            className="p-2 rounded-lg bg-white/10 text-emerald-200 hover:bg-white/20 hover:text-white transition-colors"
+            title="Plan My Hike"
+          >
+            <CalendarDays className="w-5 h-5" />
+          </button>
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg bg-white/10 text-emerald-200 hover:bg-white/20 hover:text-white transition-colors"
+            title={darkMode ? "Light mode" : "Dark mode"}
+          >
+            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button
             onClick={() => chatOpen ? setChatOpen(false) : handleOpenChat()}
-            className={`p-2 rounded-lg transition-colors ${chatOpen ? "bg-white/20 text-white" : "bg-white/10 text-emerald-200 hover:bg-white/20 hover:text-white"}`}
+            className={`hidden md:block p-2 rounded-lg transition-colors ${chatOpen ? "bg-white/20 text-white" : "bg-white/10 text-emerald-200 hover:bg-white/20 hover:text-white"}`}
             title="AI Assistant"
           >
             <MessageSquare className="w-5 h-5" />
@@ -349,6 +443,24 @@ export default function Home() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Conditions Feed toggle */}
+        <div className="px-3 py-1.5 border-b border-gray-100">
+          <button
+            onClick={() => setConditionsOpen((o) => !o)}
+            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              conditionsOpen ? "bg-emerald-50 text-emerald-700" : "text-gray-500 hover:bg-gray-50"
+            }`}
+          >
+            <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5" /> Live Trail Conditions</span>
+            <span className="text-gray-300">{conditionsOpen ? "▲" : "▼"}</span>
+          </button>
+          {conditionsOpen && (
+            <ConditionsFeed
+              onTrailClick={(name) => handleCardClick({ name })}
+            />
+          )}
         </div>
 
         {/* Surprise Me */}
@@ -412,9 +524,19 @@ export default function Home() {
             )}
           </div>
           {isoPolygon && (
-            <p className="text-[10px] text-blue-600 font-medium">
-              Showing {filteredByIsochrone?.length ?? 0} trails within {isoDuration} min drive
-            </p>
+            <div className="space-y-1">
+              <p className="text-[10px] text-blue-600 font-medium">
+                Showing {filteredByIsochrone?.length ?? 0} trails within {isoDuration} min drive
+              </p>
+              {isoApproximate && (
+                <div className="flex items-start gap-1.5 rounded-md bg-amber-50 border border-amber-200 px-2 py-1.5">
+                  <span className="text-amber-500 text-xs leading-none mt-0.5">⚠</span>
+                  <p className="text-[10px] text-amber-700 leading-tight">
+                    {isoMessage || "Using distance approximation. Set ORS_API_KEY for accurate drive-time polygons."}
+                  </p>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -518,20 +640,38 @@ export default function Home() {
           onTrailClick={(t) => setSelectedTrail(t)}
           isFavorite={favorites.includes(selectedTrail.name)}
           onToggleFavorite={() => toggleFavorite(selectedTrail.name)}
+          onShare={() => handleShare(selectedTrail)}
+          onCompare={() => addToCompare(selectedTrail)}
+          isComparing={compareTrails.some((t) => t.name === selectedTrail.name)}
         />
       )}
 
-      {/* Floating Chat Panel — fixed position so it's always on top */}
-      {chatOpen && (
+      {/* Share toast */}
+      {shareToast && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[10000] bg-gray-900 text-white text-xs px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-fade-in">
+          <Share2 className="w-3.5 h-3.5" /> Link copied to clipboard!
+        </div>
+      )}
+
+      {/* Trail Comparison bar */}
+      {compareOpen && compareTrails.length > 0 && (
+        <TrailComparison
+          trails={compareTrails}
+          onRemove={removeFromCompare}
+          onClose={() => setCompareOpen(false)}
+        />
+      )}
+
+      {/* Floating Chat Panel — full-screen on mobile, floating card on desktop */}
+      {(chatOpen || mobileTab === "chat") && (
         <div
-          className="fixed bottom-4 w-[380px] h-[540px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
-          style={{ zIndex: 9999, right: selectedTrail ? "356px" : "16px" }}
+          className={`fixed inset-0 md:inset-auto md:bottom-4 md:right-4 md:w-[380px] md:h-[540px] bg-white md:rounded-2xl shadow-2xl flex flex-col overflow-hidden md:border border-gray-200 z-[9999] pb-14 md:pb-0 ${selectedTrail ? "md:right-[356px]" : ""}`}
         >
           <div className="flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-emerald-700 to-emerald-600 shrink-0">
             <span className="text-sm font-semibold text-white flex items-center gap-2">
               <MessageSquare className="w-4 h-4" /> AI Trail Assistant
             </span>
-            <button onClick={() => setChatOpen(false)} className="p-1 rounded hover:bg-white/20 text-white transition-colors">
+            <button onClick={() => { setChatOpen(false); setMobileTab("map"); }} className="p-1 rounded hover:bg-white/20 text-white transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -548,7 +688,7 @@ export default function Home() {
       {fitnessOpen && (
         <div className="fixed inset-0 z-[9998]" onClick={() => setFitnessOpen(false)}>
           <div
-            className="absolute top-0 left-[360px] w-[300px] h-full bg-white shadow-2xl border-r border-gray-200 overflow-y-auto"
+            className="absolute inset-0 md:inset-auto md:top-0 md:left-[360px] md:w-[300px] md:h-full bg-white shadow-2xl md:border-r border-gray-200 overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-4 py-3 bg-gradient-to-r from-emerald-700 to-emerald-600 flex items-center justify-between">
@@ -655,6 +795,14 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* Itinerary Builder modal */}
+      {itineraryOpen && (
+        <ItineraryBuilder
+          onClose={() => setItineraryOpen(false)}
+          defaultRegion={activeRegion || undefined}
+        />
+      )}
+
       {/* Cluster Drawer for small clusters */}
       <ClusterDrawer
         trails={drawerTrails}
@@ -666,11 +814,11 @@ export default function Home() {
         onClose={() => setDrawerOpen(false)}
       />
 
-      {/* Floating Chat FAB — always visible bottom-right */}
+      {/* Floating Chat FAB — desktop only (mobile uses bottom nav) */}
       {!chatOpen && (
         <button
           onClick={handleOpenChat}
-          className={`fixed bottom-6 right-6 z-[9999] bg-green-600 hover:bg-green-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 ${!chatSeen ? "animate-pulse" : ""}`}
+          className={`hidden md:flex fixed bottom-6 right-6 z-[9999] bg-green-600 hover:bg-green-700 text-white rounded-full w-16 h-16 items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 ${!chatSeen ? "animate-pulse" : ""}`}
           aria-label="Open AI Chat"
         >
           <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -678,6 +826,35 @@ export default function Home() {
           </svg>
         </button>
       )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-[9998] md:hidden bg-white border-t border-gray-200 flex items-center justify-around h-14 safe-area-bottom">
+        {([
+          { tab: "map" as const, icon: <Map className="w-5 h-5" />, label: "Map" },
+          { tab: "search" as const, icon: <Search className="w-5 h-5" />, label: "Search" },
+          { tab: "chat" as const, icon: <MessageSquare className="w-5 h-5" />, label: "Chat" },
+          { tab: "saved" as const, icon: <Heart className="w-5 h-5" />, label: "Saved" },
+        ]).map((item) => (
+          <button
+            key={item.tab}
+            onClick={() => {
+              setMobileTab(item.tab);
+              if (item.tab === "chat") { setChatOpen(true); setChatSeen(true); localStorage.setItem("chat_seen", "1"); }
+              if (item.tab === "saved") setShowFavoritesOnly(true);
+              if (item.tab === "search") setShowFavoritesOnly(false);
+              if (item.tab === "map") { setChatOpen(false); }
+            }}
+            className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${
+              mobileTab === item.tab
+                ? "text-emerald-700"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            {item.icon}
+            <span className="text-[10px] font-medium mt-0.5">{item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

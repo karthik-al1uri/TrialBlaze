@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+const GpxViewerModal = dynamic(() => import("@/components/GpxViewerModal"), {
+  ssr: false,
+});
 import {
   X,
   Mountain,
@@ -19,6 +24,9 @@ import {
   AlertTriangle,
   Sun,
   Heart,
+  Route,
+  Share2,
+  GitCompare,
 } from "lucide-react";
 import {
   fetchPhotos,
@@ -37,6 +45,8 @@ import {
   fetchNarrative,
   fetchNPSAlerts,
   fetchSunTimes,
+  fetchSimilarTrails,
+  type SimilarTrail,
   type NPSAlert,
   type SunTimesResponse,
   type MapTrail,
@@ -183,9 +193,12 @@ interface TrailDetailProps {
   onTrailClick?: (trail: MapTrail) => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  onShare?: () => void;
+  onCompare?: () => void;
+  isComparing?: boolean;
 }
 
-export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, onToggleFavorite }: TrailDetailProps) {
+export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, onToggleFavorite, onShare, onCompare, isComparing }: TrailDetailProps) {
   const [photos, setPhotos] = useState<TrailPhoto[]>([]);
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [photoLoading, setPhotoLoading] = useState(true);
@@ -213,6 +226,8 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
   const [narrativeLoading, setNarrativeLoading] = useState(false);
   const [npsAlerts, setNpsAlerts] = useState<NPSAlert[]>([]);
   const [sunTimes, setSunTimes] = useState<SunTimesResponse | null>(null);
+  const [showGpxViewer, setShowGpxViewer] = useState(false);
+  const [similarTrails, setSimilarTrails] = useState<SimilarTrail[]>([]);
 
   useEffect(() => {
     setPhotoLoading(true);
@@ -323,6 +338,13 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
   }, [trail.lat, trail.lng]);
 
   useEffect(() => {
+    setSimilarTrails([]);
+    fetchSimilarTrails(trail.name, 4)
+      .then(setSimilarTrails)
+      .catch(() => setSimilarTrails([]));
+  }, [trail.name]);
+
+  useEffect(() => {
     const mgr = (trail.manager || "").toLowerCase();
     if (mgr.includes("national park") || mgr.includes("nps")) {
       fetchNPSAlerts("romo")
@@ -423,7 +445,7 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
     : "";
 
   return (
-    <div className="w-[340px] h-full bg-white border-l border-gray-200 flex flex-col z-20 shadow-xl">
+    <div className="fixed inset-0 md:static md:inset-auto w-full md:w-[340px] h-full bg-white md:border-l border-gray-200 flex flex-col z-40 md:z-20 shadow-xl pb-14 md:pb-0">
       {/* Hero photo */}
       <div className="relative h-[170px] shrink-0 bg-gradient-to-br from-emerald-600 to-emerald-800 overflow-hidden">
         {photos.length > 0 ? (
@@ -438,7 +460,27 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
             <Mountain className="w-12 h-12 text-white/40" />
           </div>
         )}
-        <div className="absolute top-3 right-3 flex items-center gap-2">
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          {onShare && (
+            <button
+              onClick={onShare}
+              className="w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition-colors backdrop-blur-sm"
+              title="Share trail link"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+          {onCompare && (
+            <button
+              onClick={onCompare}
+              className={`w-8 h-8 rounded-full text-white flex items-center justify-center transition-colors backdrop-blur-sm ${
+                isComparing ? "bg-emerald-600 hover:bg-emerald-700" : "bg-black/40 hover:bg-black/60"
+              }`}
+              title={isComparing ? "Added to compare" : "Add to compare"}
+            >
+              <GitCompare className="w-3.5 h-3.5" />
+            </button>
+          )}
           {onToggleFavorite && (
             <button
               onClick={onToggleFavorite}
@@ -990,6 +1032,42 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
           </div>
         )}
 
+        {/* Trails Like This */}
+        {similarTrails.length > 0 && (
+          <div className="px-4 py-2">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              Trails Like This
+            </p>
+            <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
+              {similarTrails.map((t, i) => (
+                <button
+                  key={`${t.name}-${i}`}
+                  onClick={() => onTrailClick?.({
+                    name: t.name,
+                    difficulty: t.difficulty,
+                    length_miles: t.length_miles,
+                    elevation_gain_ft: t.elevation_gain_ft,
+                    nearby_city: t.nearby_city,
+                    location: t.location,
+                    trailblaze_score: t.trailblaze_score,
+                    surface: t.surface,
+                    review_count: 0,
+                  })}
+                  className="flex-shrink-0 w-36 bg-emerald-50 rounded-xl p-2.5 border border-emerald-100 hover:border-emerald-400 text-left transition-colors cursor-pointer"
+                >
+                  <p className="text-[11px] font-semibold text-gray-800 leading-tight line-clamp-2">{t.name}</p>
+                  {t.difficulty && (
+                    <span className="text-[9px] text-emerald-600 font-medium capitalize">{t.difficulty}</span>
+                  )}
+                  {t.length_miles && (
+                    <p className="text-[10px] text-gray-400 mt-0.5">{t.length_miles} mi</p>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Nearby Trails */}
         {nearbyTrails.length > 0 && (
           <div className="px-4 py-2">
@@ -997,9 +1075,9 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
               Nearby Trails
             </p>
             <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
-              {nearbyTrails.map((t) => (
+              {nearbyTrails.map((t, i) => (
                 <button
-                  key={t.name}
+                  key={`${t.name}-${i}`}
                   onClick={() => onTrailClick?.({
                     name: t.name,
                     difficulty: t.difficulty,
@@ -1343,15 +1421,23 @@ export default function TrailDetail({ trail, onClose, onTrailClick, isFavorite, 
             </div>
           </div>
           <button
-            onClick={() => window.open(`/gpx-preview?trail=${encodeURIComponent(trail.name)}`, "_blank")}
+            onClick={() => setShowGpxViewer(true)}
             className="mt-2 w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
           >
-            ⬇ Download GPX
+            <Route className="w-3.5 h-3.5" />
+            View Route
           </button>
         </div>
 
         <div className="h-4" />
       </div>
+
+      {showGpxViewer && (
+        <GpxViewerModal
+          trailName={trail.name}
+          onClose={() => setShowGpxViewer(false)}
+        />
+      )}
     </div>
   );
 }

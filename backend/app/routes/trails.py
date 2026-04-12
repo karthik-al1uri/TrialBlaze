@@ -412,7 +412,7 @@ async def get_seasonal_heatmap(trail_name: str):
         raise HTTPException(status_code=404, detail="Trail coordinates not found")
 
     try:
-        seasonal = analyze_seasonal_scores(
+        seasonal = await analyze_seasonal_scores(
             db,
             trail_name=trail.get("name", trail_name),
             lat=float(centroid["lat"]),
@@ -545,18 +545,7 @@ async def search_trails_by_name(
     )
 
 
-@router.get("/{cotrex_fid}", response_model=TrailResponse)
-async def get_trail(cotrex_fid: int):
-    """Get a single trail by its COTREX FID."""
-    db = get_db()
-    trail = await db.trails.find_one({"cotrex_fid": cotrex_fid}, {"_id": 0})
-    if not trail:
-        raise HTTPException(status_code=404, detail="Trail not found")
-    trail = _with_trailblaze_score(trail)
-    return TrailResponse(**trail)
-
-
-@router.post("/surprise")
+@router.get("/surprise")
 async def surprise_trail(
     difficulty: Optional[str] = Query(None, description="Filter by difficulty"),
 ):
@@ -596,6 +585,17 @@ async def surprise_trail(
         },
         "tagline": "Hidden gem picked just for you!",
     }
+
+
+@router.get("/{cotrex_fid}", response_model=TrailResponse)
+async def get_trail(cotrex_fid: int):
+    """Get a single trail by its COTREX FID."""
+    db = get_db()
+    trail = await db.trails.find_one({"cotrex_fid": cotrex_fid}, {"_id": 0})
+    if not trail:
+        raise HTTPException(status_code=404, detail="Trail not found")
+    trail = _with_trailblaze_score(trail)
+    return TrailResponse(**trail)
 
 
 # --- Trailheads ---

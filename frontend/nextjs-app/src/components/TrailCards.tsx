@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mountain, MapPin, Ruler, CloudSun, Heart } from "lucide-react";
+import { Mountain, MapPin, Ruler, CloudSun, Heart, TrendingUp } from "lucide-react";
 import { fetchPhotos, fetchReviewSummary, type TrailReference, type ReviewSummary } from "@/lib/api";
 
 function getDiffStyle(d?: string) {
@@ -130,7 +130,7 @@ export default function TrailCards({ trails, weatherContext, title, onTrailClick
             )}
           </div>
         )}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 md:space-y-1.5 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible gap-2 md:gap-0 snap-x snap-mandatory pb-2 md:pb-0">
           {displayedTrails.map((t, i) => {
             const diff = getDiffStyle(t.difficulty);
             const photoUrl = photos[t.name];
@@ -141,7 +141,7 @@ export default function TrailCards({ trails, weatherContext, title, onTrailClick
               <div
                 key={`${t.name}-${i}`}
                 onClick={() => onTrailClick?.(t)}
-                className={`flex gap-2.5 bg-white rounded-xl p-2 border border-gray-100 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all group ${
+                className={`flex gap-2.5 bg-white rounded-xl p-2 border border-gray-100 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all group snap-start shrink-0 w-[260px] md:w-auto md:shrink ${
                   matches === false ? "opacity-40" : ""
                 }`}
               >
@@ -221,6 +221,12 @@ export default function TrailCards({ trails, weatherContext, title, onTrailClick
                       <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500">
                         <Ruler className="w-3 h-3" />
                         {t.length_miles} mi
+                      </span>
+                    )}
+                    {t.elevation_gain_ft && (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500">
+                        <TrendingUp className="w-3 h-3" />
+                        {Math.round(t.elevation_gain_ft)} ft
                       </span>
                     )}
                     {matches === true && (

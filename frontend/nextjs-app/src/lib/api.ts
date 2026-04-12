@@ -599,11 +599,7 @@ export async function fetchSurpriseTrail(
     const params = new URLSearchParams();
     if (difficulty) params.set("difficulty", difficulty);
     const q = params.toString();
-    const res = await fetch(`${BASE}/api/trails/surprise${q ? `?${q}` : ""}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
-    });
+    const res = await fetch(`${BASE}/api/trails/surprise${q ? `?${q}` : ""}`);
     if (!res.ok) return null;
     return res.json();
   } catch {
@@ -678,5 +674,86 @@ export async function fetchNearbyTrails(
     return res.json();
   } catch {
     return [];
+  }
+}
+
+// --- GPX Data (inline viewer) ---
+
+export interface GpxStats {
+  distance_mi: number;
+  elevation_gain_ft: number;
+  elevation_loss_ft: number;
+  min_elevation_ft: number | null;
+  max_elevation_ft: number | null;
+  waypoint_count: number;
+}
+
+export interface GpxElevationPoint {
+  distance_mi: number;
+  elev_ft: number;
+}
+
+export interface GpxDataResponse {
+  gpx: string;
+  stats: GpxStats;
+  elevation_profile: GpxElevationPoint[];
+}
+
+export interface SimilarTrail {
+  name: string;
+  difficulty?: string;
+  length_miles?: number;
+  elevation_gain_ft?: number;
+  nearby_city?: string;
+  location?: string;
+  trailblaze_score?: number;
+  surface?: string;
+}
+
+export async function fetchSimilarTrails(
+  trailName: string,
+  limit = 5
+): Promise<SimilarTrail[]> {
+  try {
+    const res = await fetch(
+      `${BASE}/api/trails/similar/${encodeURIComponent(trailName)}?limit=${limit}`
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.similar_trails || [];
+  } catch {
+    return [];
+  }
+}
+
+export interface RecentCondition {
+  trail_name: string;
+  condition: string;
+  note: string;
+  reported_at: string;
+}
+
+export async function fetchRecentConditions(
+  limit = 15
+): Promise<RecentCondition[]> {
+  try {
+    const res = await fetch(`${BASE}/api/conditions/recent?limit=${limit}`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchGpxData(
+  trailName: string
+): Promise<GpxDataResponse | null> {
+  try {
+    const params = new URLSearchParams({ names: trailName });
+    const res = await fetch(`${BASE}/api/geometry/gpx-data?${params}`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
   }
 }

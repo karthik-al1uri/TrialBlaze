@@ -47,6 +47,22 @@ async def submit_condition(report: ConditionReport):
     return doc
 
 
+@router.get("/recent")
+async def get_recent_conditions(limit: int = 15):
+    db = get_db()
+    reports = (
+        await db.conditions.find({})
+        .sort("reported_at", -1)
+        .limit(limit)
+        .to_list(limit)
+    )
+    for r in reports:
+        r["id"] = str(r.pop("_id"))
+        if hasattr(r.get("reported_at"), "isoformat"):
+            r["reported_at"] = r["reported_at"].isoformat()
+    return reports
+
+
 @router.get("/{trail_name}")
 async def get_conditions(trail_name: str, limit: int = 5):
     db = get_db()

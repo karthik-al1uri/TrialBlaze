@@ -46,7 +46,7 @@ export default function ClusterDrawer({
 
       {/* Trail mini cards */}
       <div className="px-4 pb-4 space-y-2">
-        {trails.map((trail) => {
+        {trails.map((trail, i) => {
           const diffColor =
             (trail.difficulty || "").toLowerCase() === "easy"
               ? "text-green-400"
@@ -55,7 +55,7 @@ export default function ClusterDrawer({
                 : "text-amber-400";
           return (
             <button
-              key={trail.name}
+              key={`${trail.name}-${i}`}
               onClick={() => {
                 onTrailSelect(trail);
                 onClose();

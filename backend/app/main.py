@@ -33,6 +33,7 @@ from backend.app.routes.isochrone import router as isochrone_router
 from backend.app.routes.narrate import router as narrate_router
 from backend.app.routes.nps import router as nps_router
 from backend.app.routes.sun import router as sun_router
+from backend.app.routes.similar import router as similar_router
 
 
 @asynccontextmanager
@@ -80,3 +81,4 @@ app.include_router(isochrone_router)
 app.include_router(narrate_router)
 app.include_router(nps_router)
 app.include_router(sun_router)
+app.include_router(similar_router)
