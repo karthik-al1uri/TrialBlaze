@@ -275,7 +275,7 @@ export default function TrailMap({
     if (featuredTrails.length === 0) return;
 
     const cluster = L.markerClusterGroup({
-      maxClusterRadius: 60,
+      maxClusterRadius: 55,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
