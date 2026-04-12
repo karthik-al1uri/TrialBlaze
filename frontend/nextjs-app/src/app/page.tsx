@@ -229,7 +229,7 @@ export default function Home() {
 
   const addToCompare = (trail: MapTrail) => {
     setCompareTrails((prev) => {
-      if (prev.find((t) => t.name === trail.name) || prev.length >= 4) return prev;
+      if (prev.find((t) => t.name === trail.name) || prev.length >= 5) return prev;
       return [...prev, trail];
     });
     setCompareOpen(true);
