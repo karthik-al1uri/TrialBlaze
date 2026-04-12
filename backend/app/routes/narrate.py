@@ -64,7 +64,7 @@ async def narrate_trail(req: NarrateRequest):
         completion = await client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=120,
+            max_tokens=150,
             temperature=0.4,
         )
         narrative = completion.choices[0].message.content.strip()
