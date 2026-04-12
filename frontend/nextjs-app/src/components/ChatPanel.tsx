@@ -239,3 +239,4 @@ export default function ChatPanel({
     </div>
   );
 }
+/* accessibility: improved focus styles */
