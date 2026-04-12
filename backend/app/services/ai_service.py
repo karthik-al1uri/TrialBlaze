@@ -20,7 +20,7 @@ from backend.app.database import get_db
 from backend.app.config import settings
 
 logger = logging.getLogger(__name__)
-
+logger.info("AI service called for narration")
 # Module-level singletons (initialized at startup)
 _faiss_index: Optional[FAISS] = None
 _compiled_graph = None

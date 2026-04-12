@@ -10,6 +10,8 @@ from backend.app.database import get_db
 
 router = APIRouter(prefix="/api/reviews", tags=["reviews"])
 
+#if not trail_id:
+#    raise HTTPException(status_code=400, detail="trail_id is required")
 
 class ReviewCreate(BaseModel):
     trail_name: str
