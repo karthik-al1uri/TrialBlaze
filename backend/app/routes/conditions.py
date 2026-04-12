@@ -15,7 +15,10 @@ VALID_CONDITIONS = [
     "Downed Tree", "Washed Out",
 ]
 
-
+"""
+Returns current trail conditions including crowd levels,
+weather impact, and alerts.
+"""
 class ConditionReport(BaseModel):
     trail_name: str
     condition: str
