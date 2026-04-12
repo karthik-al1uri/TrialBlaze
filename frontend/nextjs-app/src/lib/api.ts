@@ -58,6 +58,9 @@ const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ||
   'http://localhost:8000';
 
+// Default fetch timeout: 15s
+const FETCH_TIMEOUT = 15000;
+
 const BASE = "";
 
 export async function sendChat(
