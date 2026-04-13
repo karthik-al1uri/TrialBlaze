@@ -1,0 +1,85 @@
+TrailBlaze AI - Task Breakdown
+==============================
+
+Task 1
+------
+Tech Stack:
+Python, LangGraph, FAISS, OpenAI/Claude API
+
+Description:
+- Build a LangGraph state flow routing user prompts across weather and vector agents.
+- Generate embeddings from sample queries and store vectors in a test FAISS index.
+- Synthesize final answers using retrieved context and controlled multi-agent response logic.
+
+Phase Output:
+This phase delivers a runnable Python script that processes a hardcoded prompt, creates embeddings, retrieves nearest documents from a dummy FAISS store, and returns one grounded AI response through a clean LangGraph-managed execution path.
+
+
+Task 2
+------
+Tech Stack:
+Python, BeautifulSoup, Selenium, COTREX API, MongoDB
+
+Description:
+- Scrape Colorado trail review text from approved forum sources using structured extraction pipelines.
+- Pull official trail metadata and geospatial fields from COTREX API endpoints consistently.
+- Clean, normalize, and chunk review content into embedding-ready records with traceable source fields.
+
+Phase Output:
+This phase produces a validated trail dataset containing at least 1,000 Colorado entries with metadata and reviews, stored as JSON or MongoDB documents, with standardized schema fields and chunked text prepared for downstream vectorization workflows.
+
+
+Task 3
+------
+Tech Stack:
+Python, FastAPI, MongoDB, Postman
+
+Description:
+- Build FastAPI service layers connecting frontend requests to AI orchestration entrypoints reliably.
+- Define MongoDB collections for user sessions, chat history, and itinerary persistence models.
+- Create baseline API routes and verify request-response behavior through Postman endpoint tests.
+
+Phase Output:
+This phase provides a running FastAPI backend with core route scaffolding, mock JSON responses, basic data-model integration, and tested endpoint collections, establishing the application control plane for future AI, retrieval, and frontend integration.
+
+
+Task 4
+------
+Tech Stack:
+Next.js, React, TailwindCSS, Mapbox GL JS
+
+Description:
+- Build a mobile-first web interface with responsive layout and clean navigation structure.
+- Implement chat input components allowing users to submit natural-language trail planning questions.
+- Render map pins and trail overlays with simulated updates based on chat interactions.
+
+Phase Output:
+This phase delivers a working frontend shell where users can type messages, view simulated assistant replies, and observe corresponding map behavior, creating a clear product experience before live API and retrieval data are fully connected.
+
+
+Task 5
+------
+Tech Stack:
+Docker, AWS (EC2/Elastic Beanstalk), GitHub Actions
+
+Description:
+- Containerize frontend and backend services using reproducible Docker build configurations.
+- Configure GitHub Actions pipelines to build and validate images after pull request merges.
+- Provision AWS runtime infrastructure and deployment settings for stable hosted environments.
+
+Phase Output:
+This phase outputs a functional CI/CD pipeline and cloud-ready deployment setup where repository updates automatically trigger image builds and deployment steps, reducing manual release effort and enabling faster iteration across development and testing cycles.
+
+
+Task 6
+------
+Tech Stack:
+Git, AWS, Docker
+
+Description:
+- Connect frontend API calls to live FastAPI endpoints in deployed environments.
+- Integrate LangGraph execution inside backend services for real multi-agent query handling.
+- Link MongoDB trail records with FAISS retrieval pipeline for grounded answer generation.
+
+Phase Output:
+This phase delivers the integrated production flow from user query to final response, combining frontend, backend, retrieval, and AI synthesis, with branch merges completed and deployment verified through one complete end-to-end acceptance scenario.
