@@ -202,7 +202,8 @@ def main():
     os.makedirs(INDEX_DIR, exist_ok=True)
     print("Saving index to ai/vector-store/...")
     faiss_index.save_local(INDEX_DIR)
-    print(f"Index saved. Contains {faiss_index.index.ntotal} vectors.")
+    n_vectors = faiss_index.index.ntotal
+    print(f"Index saved. Contains {n_vectors} vectors.")
 
     # Source breakdown
     source_counts: Dict[str, int] = {}
@@ -222,6 +223,38 @@ def main():
         print(f"  {src}: {source_counts[src]}")
 
     total = sum(source_counts.values())
+
+    # --- Index validation: reload and run a probe search ---
+    print("Validating index by reloading and running probe search...")
+    try:
+        probe_index = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
+        probe_results = probe_index.similarity_search("moderate hiking trail Colorado", k=3)
+        if probe_results:
+            print(f"  Validation OK — probe returned {len(probe_results)} results.")
+            for r in probe_results:
+                print(f"    - {r.metadata.get('name', 'unknown')}")
+        else:
+            print("  WARNING: probe search returned 0 results. Index may be empty.")
+    except Exception as e:
+        print(f"  WARNING: Index validation failed: {e}")
+
+    # --- Write index metadata sidecar JSON ---
+    import json as _json
+    from datetime import datetime, timezone
+
+    meta_path = os.path.join(INDEX_DIR, "index_meta.json")
+    embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+    index_meta = {
+        "built_at": datetime.now(timezone.utc).isoformat(),
+        "embedding_model": embedding_model,
+        "total_vectors": n_vectors,
+        "source_filter_used": args.source,
+        "source_breakdown": source_counts,
+    }
+    with open(meta_path, "w") as f:
+        _json.dump(index_meta, f, indent=2)
+    print(f"Index metadata saved to {meta_path}")
+
     print(f"FAISS rebuild complete. AI chat now covers all {total} trails.")
 
     client.close()
