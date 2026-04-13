@@ -2,8 +2,15 @@
 LangGraph orchestration graph for TrailBlaze AI.
 Routes user queries through classification, retrieval, weather,
 and synthesis agents based on query intent.
+
+Routing logic:
+  trail         → vector_agent → synthesizer
+  weather       → weather_agent → synthesizer
+  both          → vector_agent → weather_agent → synthesizer
+  national_park → vector_agent → weather_agent → synthesizer
 """
 
+import logging
 from functools import partial
 
 from langgraph.graph import StateGraph, END as LANGGRAPH_END
@@ -16,18 +23,42 @@ from ai.langgraph.agents import (
     synthesizer_agent,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def _route_decision(state: TrailBlazeState) -> str:
-    """Conditional edge: decide which agents to invoke after routing."""
+    """
+    Conditional edge after router: decide which pipeline branch to take.
+    Logs the routing decision and confidence for observability.
+    """
     route = state.get("route", "both")
-    if route == "trail":
-        return "vector_agent"
-    elif route == "weather":
+    confidence = state.get("route_confidence", 0.0)
+    logger.info(
+        "[graph] Routing decision: %s (confidence=%.2f)", route, confidence
+    )
+    if route == "weather":
         return "weather_agent"
-    elif route == "national_park":
-        return "vector_agent"  # national_park uses vector with NPS filters
-    else:
-        return "vector_agent"  # "both" starts with vector, then weather
+    # trail, both, national_park — all start with vector retrieval
+    return "vector_agent"
+
+
+def _after_vector_decision(state: TrailBlazeState) -> str:
+    """
+    Conditional edge after vector_agent.
+    'both' and 'national_park' routes always fetch weather too.
+    Pure 'trail' queries skip weather.
+    If retrieval was empty on a trail-only query, skip weather and go straight to synthesizer.
+    """
+    route = state.get("route", "both")
+    retrieval_empty = state.get("retrieval_empty", False)
+
+    if route in ("both", "national_park"):
+        return "weather_agent"
+    if route == "trail" and retrieval_empty:
+        # Skip weather fetch — synthesizer will use the fallback response
+        logger.info("[graph] Retrieval empty on trail route — skipping weather, going to synthesizer")
+        return "synthesizer"
+    return "synthesizer"
 
 
 def build_graph(faiss_index) -> StateGraph:
@@ -54,7 +85,7 @@ def build_graph(faiss_index) -> StateGraph:
     # Set entry point
     graph.set_entry_point("router")
 
-    # Conditional routing after classification
+    # Conditional routing after router classification
     graph.add_conditional_edges(
         "router",
         _route_decision,
@@ -64,25 +95,20 @@ def build_graph(faiss_index) -> StateGraph:
         },
     )
 
-    # After vector agent: if route is "both", go to weather; otherwise synthesize
-    def _after_vector(state: TrailBlazeState) -> str:
-        if state.get("route") in ("both", "national_park"):
-            return "weather_agent"
-        return "synthesizer"
-
+    # After vector agent: route to weather (both/national_park) or synthesizer (trail)
     graph.add_conditional_edges(
         "vector_agent",
-        _after_vector,
+        _after_vector_decision,
         {
             "weather_agent": "weather_agent",
             "synthesizer": "synthesizer",
         },
     )
 
-    # After weather agent: always go to synthesizer
+    # After weather agent: always synthesize
     graph.add_edge("weather_agent", "synthesizer")
 
-    # After synthesizer: end
+    # After synthesizer: end of graph
     graph.add_edge("synthesizer", LANGGRAPH_END)
 
     return graph.compile()

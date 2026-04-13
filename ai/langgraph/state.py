@@ -3,7 +3,7 @@ Shared state definition for the TrailBlaze AI LangGraph execution.
 All agents read from and write to this typed state dict.
 """
 
-from typing import TypedDict, List, Optional, Dict
+from typing import TypedDict, List, Optional, Dict, Any
 
 from langchain_core.documents import Document
 
@@ -17,8 +17,14 @@ class TrailBlazeState(TypedDict):
     # Conversation history: list of {"role": "user"|"assistant", "content": str}
     chat_history: List[Dict[str, str]]
 
+    # Session identifier for multi-turn tracking
+    session_id: Optional[str]
+
     # Routing decision: which agents should handle the query
-    route: Optional[str]  # "trail", "weather", "both"
+    route: Optional[str]  # "trail", "weather", "both", "national_park"
+
+    # Router confidence score (0.0 - 1.0) — how certain the router is
+    route_confidence: Optional[float]
 
     # Retrieved trail documents from FAISS
     retrieved_docs: List[Document]
@@ -38,3 +44,18 @@ class TrailBlazeState(TypedDict):
 
     # Final synthesized answer
     answer: str
+
+    # Per-node error tracking: {"node_name": "error message"}
+    node_errors: Dict[str, str]
+
+    # Retry attempt counters per node
+    retry_counts: Dict[str, int]
+
+    # Timing metadata: {"node_name": elapsed_seconds}
+    node_timings: Dict[str, float]
+
+    # Whether retrieval returned zero results (triggers fallback path)
+    retrieval_empty: bool
+
+    # Additional debug metadata for quality checks
+    debug_metadata: Dict[str, Any]
